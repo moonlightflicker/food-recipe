@@ -2,7 +2,6 @@ const searchBtn = document.getElementById('search-btn');
 const searchInput = document.getElementById('search-input');
 const mealList = document.getElementById('meal-list');
 const mealDetails = document.querySelector('meal-details-content');
-const recipeCloseBtn = document.getElementById('recipe-close-btn');
 
 searchBtn.addEventListener('click', getMealList);
 searchInput.addEventListener('keyup', function() {
@@ -43,7 +42,6 @@ function getMealList() {
 }
 
 function getMealRecipe(e){
-    console.log('asdas')
     e.preventDefault();
     if(e.target.classList.contains('recipe-btn')){
         let mealId = e.target.parentElement.parentElement.getAttribute('data-id');
@@ -56,35 +54,45 @@ function getMealRecipe(e){
 function showRecipeModal(meal) {
     const html = `
         <div class="recipe-modal" id="recipe-modal">
-            <button type="button" class="btn recipe-close-btn" id="recipe-close-btn">
-                <i class="fas fa-times"></i>
-            </button>
+            <div class="recipe-modal-header">
+                <h2 class="recipe-title">${meal.strMeal}</h2>
+                <button type="button" class="btn recipe-close-btn" id="recipe-close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
 
             <div class="recipe-content">
-                <h2 class="recipe-title">${meal.strMeal}</h2>
-                <p class="recipe-category">${meal.strCategory}</p>
-                <div class="recipe-instruct">
-                    <h3>Instructions:</h3>
+                <span class="recipe-category">${meal.strCategory}</span>
+                <div class="recipe-instructions">
+                    <div class="recipe-instructions-header">
+                        <span>Instructions:</span>
+                        <a class="recipe-video" href="${meal.strYoutube}" target="_blank">Video</a>
+                    </div>
                     <p>${meal.strInstructions}</p>
                 </div>
                 <div class="recipe-meal-img">
                     <img src="${meal.strMealThumb}" alt="">
-                </div>
-                <div class="recipe-link">
-                    <a href="${meal.strYoutube}" target="_blank">Watch Video</a>
                 </div>
             </div>
         </div>
     `;
     document.getElementById('recipe-modal-container').innerHTML = html;
     document.addEventListener('click', handleRecipeModalOutsideClick);
+
+    const recipeCloseBtn = document.getElementById('recipe-close-btn');
+    recipeCloseBtn.addEventListener('click', closeModal);
 }
 
 function handleRecipeModalOutsideClick(e) {
     const recipeModal = document.getElementById('recipe-modal');
     const isClickOutsideModal = !recipeModal.contains(e.target);
     if (isClickOutsideModal) {
-        document.removeEventListener('click', handleRecipeModalOutsideClick);
-        recipeModal.remove();
+        closeModal();
     }
+}
+
+function closeModal() {
+    const recipeModal = document.getElementById('recipe-modal');
+    document.removeEventListener('click', handleRecipeModalOutsideClick);
+    recipeModal.remove();
 }
